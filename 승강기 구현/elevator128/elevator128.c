@@ -1,6 +1,6 @@
 
 
-#define WEIGHT_REF 40 	//π´∞‘ ±‚¡ÿ∞™ ¥‹¿ß g
+#define WEIGHT_REF 40 	//Î¨¥Í≤å Í∏∞Ï§ÄÍ∞í Îã®ÏúÑ g
 
 
 
@@ -84,7 +84,7 @@ void main()
 	while(1)
 	{
 
-		//π´∞‘ ºæº≠∞™ πﬁæ∆ø»
+		//Î¨¥Í≤å ÏÑºÏÑúÍ∞í Î∞õÏïÑÏò¥
 		weight_cnt++;
 		if(weight_cnt > 10)
 		{
@@ -92,7 +92,7 @@ void main()
 			weight_cnt = 0;
 		}
 
-		//π´∞‘ ∫Ò±≥ 
+		//Î¨¥Í≤å ÎπÑÍµê 
 		if(weight > WEIGHT_REF)
 		{
 			over_flag = 1;
@@ -105,15 +105,9 @@ void main()
 			sbi(PORTE,0);
 			cbi(PORTE,1);
 
-		}
+	
 
-		//PSD ºæº≠∞™ πﬁæ∆ø»
-		val = 100000.000 / (double)Adc_Channel(0);
-		bef_val = value;
-		a = 0.3;
-		value = a*val + (1.000-a)*bef_val;
-
-		//«ˆ¿Á√˛ºˆ ∆«¥‹
+		//ÌòÑÏû¨Ï∏µÏàò ÌåêÎã®
 		if(value < 300)
 			current_floor = 1;
 		else if(value < 500)
@@ -124,7 +118,7 @@ void main()
 			current_floor = 4;
 
 
-		//Ω∫¿ßƒ° ¿‘∑¬  -  π´∞‘∞° ≥—¡ˆ æ æ“¿ª∂ß∏∏ ªı∑ŒøÓ ¿‘∑¬ πﬁæ∆ø»
+		//Ïä§ÏúÑÏπò ÏûÖÎ†•  -  Î¨¥Í≤åÍ∞Ä ÎÑòÏßÄ ÏïäÏïòÏùÑÎïåÎßå ÏÉàÎ°úÏö¥ ÏûÖÎ†• Î∞õÏïÑÏò¥
 		if(over_flag == 0)
 		{
 			if((PIND & 0b00010000) == 0x00)
@@ -137,7 +131,7 @@ void main()
 				target_floor = 4;
 		}
 
-		//√˛ºˆ ∞·¡§ 
+		//Ï∏µÏàò Í≤∞Ï†ï 
 		if(target_floor == 1)
 			target = 250.000;
 		if(target_floor == 2)
@@ -148,7 +142,7 @@ void main()
 			target = 750.000;
 
 	
-		//∫Ò∑  ¡¶æÓ±‚
+		//ÎπÑÎ°Ä Ï†úÏñ¥Í∏∞
 		//target = 200.000;
 		bef_error = error;
 		error = target - value;
@@ -157,24 +151,24 @@ void main()
 		
 
 
-		if(error < 0)	//≥ª∑¡∞•∂ß
+		if(error < 0)	//ÎÇ¥Î†§Í∞àÎïå
 		{
 			P = 2.000;
 			D = 25.000;
 		}
-		else			//ø√∂Û∞•∂ß
+		else			//Ïò¨ÎùºÍ∞àÎïå
 		{
 			P = 2.800;
 			D = 8.000;
 
-			if(value < 200)	//1√˛ πŸ¥⁄ ∫Í∑π¿Ã≈© 
+			if(value < 200)	//1Ï∏µ Î∞îÎã• Î∏åÎ†àÏù¥ÌÅ¨ 
 				P = 20.000;
 		}
 
 			
 		pwm_data = P*error + D*def_error; 
 			
-		pwm_max = 200;		//º”µµ ¡¶«—∞™ 
+		pwm_max = 200;		//ÏÜçÎèÑ Ï†úÌïúÍ∞í 
 		if(pwm_data > pwm_max)
 			pwm_data = pwm_max;
 		if(pwm_data < -pwm_max)
@@ -182,7 +176,7 @@ void main()
 
 		if(pwm_data >= 0)
 		{
-			//¡§πÊ«‚ 
+			//Ï†ïÎ∞©Ìñ• 
 			OCR1A = 0;
 			OCR1B = pwm_data;
 		}
@@ -190,19 +184,19 @@ void main()
 		{
 			pwm_data = -pwm_data;
 
-			//ø™πÊ«‚ 
+			//Ïó≠Î∞©Ìñ• 
 			OCR1A = pwm_data;
 			OCR1B = 0;
 		}
 
 
-		//LCDø° «•Ω√
+		//LCDÏóê ÌëúÏãú
 		sprintf(buf, "[ %1dF ] now:  %dF ",target_floor,current_floor);
 		LCD_string(1,buf);
 		sprintf(buf, "[%3dg] now: %3dg",WEIGHT_REF,weight);
 		LCD_string(2,buf);
 		
-		//10ms µÙ∑π¿Ã 
+		//10ms ÎîúÎ†àÏù¥ 
 		_delay_ms(10);
 
 	}
@@ -211,9 +205,9 @@ void main()
 
 int Adc_Channel(unsigned char Adc_input)
 {
-	ADMUX = (Adc_input | 0x40);    //√§≥Œ ∞·¡§
-	ADCSRA |= 0x40;             //∫Ø»Ø Ω√¿€!
-	while((ADCSRA & 0x10) == 0);   //∫Ø»Ø¿Ã øœ∑·µ…ãö ±Ó¡ˆ ±‚¥Ÿ∏≤.
+	ADMUX = (Adc_input | 0x40);    //Ï±ÑÎÑê Í≤∞Ï†ï
+	ADCSRA |= 0x40;             //Î≥ÄÌôò ÏãúÏûë!
+	while((ADCSRA & 0x10) == 0);   //Î≥ÄÌôòÏù¥ ÏôÑÎ£åÎê†¬ã¬ö ÍπåÏßÄ Í∏∞Îã§Î¶º.
 	return ADC;
 }
 
@@ -245,7 +239,7 @@ unsigned long ReadCout(void)
 
 		sum += count;
 	}
-	data1 = sum/32;			//32∞≥ µ•¿Ã≈Õ ∆Ú±’ 
+	data1 = sum/32;			//32Í∞ú Îç∞Ïù¥ÌÑ∞ ÌèâÍ∑† 
 
 	if(offset_flag == 0)
 	{
@@ -254,7 +248,7 @@ unsigned long ReadCout(void)
 	}
 
 	if(data1 > offset)
-		data2 = data1 - offset;	//offset ¡¶ø‹ 
+		data2 = data1 - offset;	//offset Ï†úÏô∏ 
 	else
 		data2 = 0;
 
@@ -307,20 +301,20 @@ void LCD_init(void)
 
 	LCD_command(0x28);		// DL=0(4bit) N=1(2Line) F=0(5x7)
 	_delay_ms(2);			// [function set] 0b00101000
-							// 4:(DL) 1¿Ã∏È 8bit∏µÂ, 0¿Ã∏È 4bit∏µÂ
-							// 3:(N) 0¿Ã∏È 1¡Ÿ¬•∏Æ, 1¿Ã∏È 2¡Ÿ¬•∏Æ
-							// 2:(F) 0¿Ã∏È 5x8dots, 1¿Ã∏È 5x11dots
+							// 4:(DL) 1Ïù¥Î©¥ 8bitÎ™®Îìú, 0Ïù¥Î©¥ 4bitÎ™®Îìú
+							// 3:(N) 0Ïù¥Î©¥ 1Ï§ÑÏßúÎ¶¨, 1Ïù¥Î©¥ 2Ï§ÑÏßúÎ¶¨
+							// 2:(F) 0Ïù¥Î©¥ 5x8dots, 1Ïù¥Î©¥ 5x11dots
 
 	LCD_command(0x0C);		// LCD ON, Cursor X, Blink X
 	_delay_ms(2);			// [display on/off control] 0b00001100
-							// 2:(D) 1¿Ã∏È display on, 0¿Ã∏È off
-							// 1:(C) 1¿Ã∏È cursor on, 0¿Ã∏È off
-							// 0:(B) 1¿Ã∏È cursor blink, 0¿Ã∏È off 
+							// 2:(D) 1Ïù¥Î©¥ display on, 0Ïù¥Î©¥ off
+							// 1:(C) 1Ïù¥Î©¥ cursor on, 0Ïù¥Î©¥ off
+							// 0:(B) 1Ïù¥Î©¥ cursor blink, 0Ïù¥Î©¥ off 
 
 	LCD_command(0x06);		// Entry Mode
 	_delay_ms(2);			// [entry mode set] 0b00000110
-							// 1:(I/D) 1¿Ã∏È ø¿∏•¬ ¿∏∑Œ, 0¿Ã∏È øﬁ¬ 
-							// 0:(SH) CGRAM ªÁøÎ∞¸∑√ 
+							// 1:(I/D) 1Ïù¥Î©¥ Ïò§Î•∏Ï™ΩÏúºÎ°ú, 0Ïù¥Î©¥ ÏôºÏ™Ω
+							// 0:(SH) CGRAM ÏÇ¨Ïö©Í¥ÄÎ†® 
 							
  	LCD_command(0x01);		// LCD Clear
 	_delay_ms(2);
@@ -334,455 +328,3 @@ void LCD_string(char line, char *string)
 	while(*string)
 		LCD_data(*string++);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//PSD ºæº≠+LCD ≈◊Ω∫∆Æ 
-/*
-#define F_CPU 16000000UL
-#define sbi(PORTX,bitX) PORTX|=(1<<bitX)
-#define cbi(PORTX,bitX) PORTX&=~(1<<bitX)
-
-
-#include<avr/io.h>
-#include<avr/delay.h>
-#include<stdio.h>
-
-
-int Adc_Channel(unsigned char Adc_input);
-void LCD_command(char command);
-void LCD_data(char data);
-void LCD_init(void);
-void LCD_string(char line, char *string);
-
-
-char string1[16] = "hell";
-char string2[16] = "Good Job!";
-char buf[32] = {' ',};
-int value = 666; 
-
-
-
-void main()
-{	
-	//IO
-	DDRC = 0xFF;
-	PORTC = 0x00;
-
-	//ADC
-	ADMUX = 0x00;
-	ADCSRA = (1<<ADEN)|(1<<ADSC)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
-
-	//LCD
-	LCD_init();
-
-
-	while(1)
-	{
-		value = Adc_Channel(0);
-	
-
-		sprintf(buf, "Sensor : %d",value);
-		LCD_string(1,buf);
-		_delay_ms(100);
-
-	}
-}
-
-
-int Adc_Channel(unsigned char Adc_input)
-{
-	ADMUX = (Adc_input | 0x40);    //√§≥Œ ∞·¡§
-	ADCSRA |= 0x40;             //∫Ø»Ø Ω√¿€!
-	while((ADCSRA & 0x10) == 0);   //∫Ø»Ø¿Ã øœ∑·µ…ãö ±Ó¡ˆ ±‚¥Ÿ∏≤.
-	return ADC;
-}
-
-
-void LCD_command(char command)
-{
-	PORTC = (command&0xF0);	// send High data
-	cbi(PORTC,0); 			// RS=0
-	//cbi(PORTC,1);			// RW=0
-	sbi(PORTC,2);			// Enable
-	_delay_us(1);
-	cbi(PORTC,2);			// Disable
-
-	PORTC = (command&0x0F)<<4;// send Low data
-	cbi(PORTC,0); 			// RS=0
-	//cbi(PORTC,1);			// RW=0
-	sbi(PORTC,2);			// Enable
-	_delay_us(1);
-	cbi(PORTC,2);			// Disable
-}
-
-
-
-void LCD_data(char data)
-{
-	_delay_us(100);
-
-	PORTC = (data&0xF0);	// send High data
-	sbi(PORTC,0); 			// RS=1
-	//cbi(PORTC,1);			// RW=0
-	sbi(PORTC,2);			// Enable
-	_delay_us(1);
-	cbi(PORTC,2);			// Disable
-
-	PORTC = (data&0x0F)<<4;	// send Low data
-	sbi(PORTC,0); 			// RS=1
-	//cbi(PORTC,1);			// RW=0
-	sbi(PORTC,2);			// Enable
-	_delay_us(1);
-	cbi(PORTC,2);			// Disable
-}
-
-
-
-void LCD_init(void)
-{
-	_delay_ms(50);
-
-	LCD_command(0x28);		// DL=0(4bit) N=1(2Line) F=0(5x7)
-	_delay_ms(2);			// [function set] 0b00101000
-							// 4:(DL) 1¿Ã∏È 8bit∏µÂ, 0¿Ã∏È 4bit∏µÂ
-							// 3:(N) 0¿Ã∏È 1¡Ÿ¬•∏Æ, 1¿Ã∏È 2¡Ÿ¬•∏Æ
-							// 2:(F) 0¿Ã∏È 5x8dots, 1¿Ã∏È 5x11dots
-
-	LCD_command(0x0C);		// LCD ON, Cursor X, Blink X
-	_delay_ms(2);			// [display on/off control] 0b00001100
-							// 2:(D) 1¿Ã∏È display on, 0¿Ã∏È off
-							// 1:(C) 1¿Ã∏È cursor on, 0¿Ã∏È off
-							// 0:(B) 1¿Ã∏È cursor blink, 0¿Ã∏È off 
-
-	LCD_command(0x06);		// Entry Mode
-	_delay_ms(2);			// [entry mode set] 0b00000110
-							// 1:(I/D) 1¿Ã∏È ø¿∏•¬ ¿∏∑Œ, 0¿Ã∏È øﬁ¬ 
-							// 0:(SH) CGRAM ªÁøÎ∞¸∑√ 
-							
- 	LCD_command(0x01);		// LCD Clear
-	_delay_ms(2);
-}
-
-
-
-void LCD_string(char line, char *string)
-{
-	LCD_command(0x80+((line-1)*0x40));
-	while(*string)
-		LCD_data(*string++);
-}
-*/
-
-
-
-
-
-//∏≈Õ ≈◊Ω∫∆Æ
-/*
-
-#include<avr/io.h>
-
-
-void main()
-{
-	//IO
-	DDRB = 0xff;
-	PORTB = 0x00;
-	
-	//TIMER/COUNTER 1
-	TCCR1A = (1<<COM1A1)|(1<<COM1A0)|(1<<COM1B1)|(1<<COM1B0)|(1<<WGM11)|(0<<WGM10);
-	TCCR1B = (1<<WGM13)|(1<<WGM12)|(1<<CS11);
-	ICR1 = 2000;
-	OCR1A = 0;
-	OCR1B = 0;
-
-	while(1)
-	{
-
-		OCR1A = 0;
-		OCR1B = 200;
-	}
-}
-*/
-
-
-
-
-
-
-
-
-//LCD ≈◊Ω∫∆Æ
-/*
-
-#define F_CPU 16000000UL
-#define sbi(PORTX,bitX) PORTX|=(1<<bitX)
-#define cbi(PORTX,bitX) PORTX&=~(1<<bitX)
-
-
-#include<avr/io.h>
-#include<avr/delay.h>
-#include<stdio.h>
-
-void LCD_command(char command);
-void LCD_data(char data);
-void LCD_init(void);
-void LCD_string(char line, char *string);
-
-
-char string1[16] = "Hell!";
-char string2[16] = "Good Job!";
-char buf[32] = {' ',};
-int value = 666; 
-
-
-void main()
-{
-	DDRC = 0xFF;
-	PORTC = 0x00;
-
-	LCD_init();
-
-    while(1)
-	{
-		sprintf(buf, "Hello %s %d",string1,value);
-		LCD_string(1,buf);
-		_delay_ms(1000);
-
-		LCD_command(0x01);		// LCD Clear
-		_delay_ms(2);
-
-		LCD_string(2,string2);
-		_delay_ms(1000);
-
-		LCD_command(0x01);		// LCD Clear
-		_delay_ms(2);
-	}
-}
-
-
-void LCD_command(char command)
-{
-	PORTC = (command&0xF0);	// send High data
-	cbi(PORTC,0); 			// RS=0
-	//cbi(PORTC,1);			// RW=0
-	sbi(PORTC,2);			// Enable
-	_delay_us(1);
-	cbi(PORTC,2);			// Disable
-
-	PORTC = (command&0x0F)<<4;// send Low data
-	cbi(PORTC,0); 			// RS=0
-	//cbi(PORTC,1);			// RW=0
-	sbi(PORTC,2);			// Enable
-	_delay_us(1);
-	cbi(PORTC,2);			// Disable
-}
-
-
-
-void LCD_data(char data)
-{
-	_delay_us(100);
-
-	PORTC = (data&0xF0);	// send High data
-	sbi(PORTC,0); 			// RS=1
-	//cbi(PORTC,1);			// RW=0
-	sbi(PORTC,2);			// Enable
-	_delay_us(1);
-	cbi(PORTC,2);			// Disable
-
-	PORTC = (data&0x0F)<<4;	// send Low data
-	sbi(PORTC,0); 			// RS=1
-	//cbi(PORTC,1);			// RW=0
-	sbi(PORTC,2);			// Enable
-	_delay_us(1);
-	cbi(PORTC,2);			// Disable
-}
-
-
-
-void LCD_init(void)
-{
-	_delay_ms(50);
-
-	LCD_command(0x28);		// DL=0(4bit) N=1(2Line) F=0(5x7)
-	_delay_ms(2);			// [function set] 0b00101000
-							// 4:(DL) 1¿Ã∏È 8bit∏µÂ, 0¿Ã∏È 4bit∏µÂ
-							// 3:(N) 0¿Ã∏È 1¡Ÿ¬•∏Æ, 1¿Ã∏È 2¡Ÿ¬•∏Æ
-							// 2:(F) 0¿Ã∏È 5x8dots, 1¿Ã∏È 5x11dots
-
-	LCD_command(0x0C);		// LCD ON, Cursor X, Blink X
-	_delay_ms(2);			// [display on/off control] 0b00001100
-							// 2:(D) 1¿Ã∏È display on, 0¿Ã∏È off
-							// 1:(C) 1¿Ã∏È cursor on, 0¿Ã∏È off
-							// 0:(B) 1¿Ã∏È cursor blink, 0¿Ã∏È off 
-
-	LCD_command(0x06);		// Entry Mode
-	_delay_ms(2);			// [entry mode set] 0b00000110
-							// 1:(I/D) 1¿Ã∏È ø¿∏•¬ ¿∏∑Œ, 0¿Ã∏È øﬁ¬ 
-							// 0:(SH) CGRAM ªÁøÎ∞¸∑√ 
-							
- 	LCD_command(0x01);		// LCD Clear
-	_delay_ms(2);
-}
-
-
-
-void LCD_string(char line, char *string)
-{
-	LCD_command(0x80+((line-1)*0x40));
-	while(*string)
-		LCD_data(*string++);
-}
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//π´∞‘ ºæº≠ ≈◊Ω∫∆Æ
-/*
-
-#define sbi(PORTX , BitX) PORTX |= (1<<BitX) 
-#define cbi(PORTX ,BitX) PORTX &= ~(1<<BitX) 
-
-
-#include<avr/io.h>
-#include<util/delay.h>
-
-
-void UART1_TX_int(unsigned long data);
-void UART1_TX(unsigned char data);
-unsigned long ReadCout(void);
-
-
-volatile unsigned long weight = 0;
-volatile unsigned long offset = 0;
-volatile int offset_flag = 0;
-
-volatile int test_cnt = 0;
-
-void main()
-{
-	DDRA = 0b00000010;	//A0(DOUT): input, A1(SCK):output
-	
-	UCSR1A = 0b00000000;
-	UCSR1B = 0b00001000;	//TXEN1
-	UCSR1C = 0b00000110;	//UCSZ11,UCSZ10//8bit
-	UBRR1H = 0;
-	UBRR1L = 103;			//'16Mhz' 9600bps
-
-	while(1)
-	{
-		weight = ReadCout()/2000;
-
-		test_cnt++;
-		if(test_cnt > 1000)
-			test_cnt = 0;
-		_delay_ms(100);
-
-		UART1_TX_int(weight);
-		UART1_TX('\n');
-		UART1_TX('\r');
-	}
-}
-
-unsigned long ReadCout(void)
-{
-	unsigned long sum = 0,count = 0,data1 = 0,data2 = 0;
-
-	for(int j=0; j<32; j++)
-	{
-		sbi(PORTA, 0);	//DOUT : 1
-		cbi(PORTA, 1);	//SCK : 0
-	
-		count = 0;
-
-		while((PINA & 0b00000001) == 0b00000001);
-	
-		for(int i=0; i<24; i++)
-		{
-			sbi(PORTA, 1);	//SCK : 1
-			count = count<<1;
-			cbi(PORTA, 1);	//SCK : 0
-			if((PINA & 0b00000001) == 0b00000001)
-				count++;
-		}
-		sbi(PORTA, 1);	//SCK : 1
-		count = count^0x800000;
-		cbi(PORTA, 1);	//SCK : 0
-
-		sum += count;
-	}
-	data1 = sum/32;			//32∞≥ µ•¿Ã≈Õ ∆Ú±’ 
-
-	if(offset_flag == 0)
-	{
-		offset = data1;
-		offset_flag = 1;
-	}
-
-	if(data1 > offset)
-		data2 = data1 - offset;	//offset ¡¶ø‹ 
-	else
-		data2 = 0;
-
-	return data2;
-}
-
-void UART1_TX(unsigned char data)
-{
-	while((UCSR1A & 0x20 ) == 0x00 );
-	UDR1 = data;
-}
-
-void UART1_TX_int(unsigned long data)
-{
-	unsigned long temp = 0;
-
-	temp = data/10000;
-	UART1_TX(temp+48);
-	temp = (data%10000)/1000;
-	UART1_TX(temp+48);
-	temp = (data%1000)/100;
-	UART1_TX(temp+48);
-	temp = (data%100)/10;	
-	UART1_TX(temp+48);
-	temp = data%10; 
-	UART1_TX(temp+48);
-}
-*/
