@@ -1,0 +1,73 @@
+#define F_CPU 16000000
+#include <avr/io.h>
+#include <util/delay.h>
+const unsigned char Segment_Data[] =
+{0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x27,0x7F,0x6F};
+int main(void)
+{
+DDRC = 0xff;
+DDRA = 0xff;
+PORTC = 0x00;
+while (1) {
+for(int i=0;i<10;i++)
+{
+PORTA = Segment_Data[i];
+delay_ms(1000);
+}
+}
+}
+
+//////////////////////
+2번
+
+#define F_CPU 16000000
+#include <avr/io.h>
+#include <util/delay.h>
+const unsigned char Segment_Data[] =
+{0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x27,0x7F,0x6F};
+unsigned char COLUMN[4]={0,0,0,0};
+int main(void) ■
+int number = 4312;
+DDRC = 0xff;
+DDRA = 0xff;
+PORTC = 0x00;
+COLUMN[0] = number/1000; // 1000✗✾✿❏❑▲
+COLUMN[1] = (number%1000)/100; // 100✗✾✿❏❑▲
+COLUMN[2] = (number%100)/10; // 10✗✾✿❏❑▲
+COLUMN[3] = (number%10); // 1✗✾✿❏❑▲
+while (1) {
+for(int i=0;i<4;i++) { //▼✾◆❏❖P✾◗❀❘❙✫✬.
+PORTC=~(0x01<<i);
+PORTA = Segment_Data[COLUMN[i]];
+_delay_ms(2); // wait for a second
+}
+}
+}
+
+/////////////////////////////
+3번
+
+#define F_CPU 16000000
+#include <avr/io.h>
+#include <util/delay.h>
+void Show4Digit(int number);
+void ShowDigit(int i, int digit);
+const unsigned char Segment_Data[] = 
+{0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x27,0x7F,0x6F};
+char COLUMN[4]={0,0,0,0};
+int main(void) {
+DDRC = 0xff; DDRA = 0xff; PORTC = 0x00;
+while (1) { Show4Digit(4312); }
+}
+void Show4Digit(int number) {
+COLUMN[0] = number/1000; COLUMN[1] = (number%1000)/100;
+COLUMN[2] = (number%100)/10; COLUMN[3] = (number%10);
+for(int i=0;i<4;i++) {
+ShowDigit(COLUMN[i],i); //▼✾◆❏❖P✾◗❀❘❙✫✬.
+_delay_ms(2); // wait for a second
+}
+}
+void ShowDigit(int i, int digit){
+PORTC=~(0x01<<digit);
+PORTA = Segment_Data[i];
+}
