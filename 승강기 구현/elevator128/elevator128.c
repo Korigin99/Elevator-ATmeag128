@@ -1,5 +1,3 @@
-
-
 #define WEIGHT_REF 40 	//무게 기준값 단위 g
 
 
@@ -36,8 +34,6 @@ double bef_error = 0.000;
 double def_error = 0.000;
 double P = 0.000;
 double D = 0.000;
-double pwm_data = 0.000;
-double pwm_max = 1000;
 
 int weight_cnt = 0;
 volatile unsigned long weight = 0;
@@ -84,29 +80,6 @@ void main()
 	while(1)
 	{
 
-		//무게 센서값 받아옴
-		weight_cnt++;
-		if(weight_cnt > 10)
-		{
-			weight = ReadCout()/2000;
-			weight_cnt = 0;
-		}
-
-		//무게 비교 
-		if(weight > WEIGHT_REF)
-		{
-			over_flag = 1;
-			cbi(PORTE,0);
-			sbi(PORTE,1);
-		}
-		else
-		{
-			over_flag = 0;
-			sbi(PORTE,0);
-			cbi(PORTE,1);
-
-	
-
 		//현재층수 판단
 		if(value < 300)
 			current_floor = 1;
@@ -116,20 +89,6 @@ void main()
 			current_floor = 3;
 		else
 			current_floor = 4;
-
-
-		//스위치 입력  -  무게가 넘지 않았을때만 새로운 입력 받아옴
-		if(over_flag == 0)
-		{
-			if((PIND & 0b00010000) == 0x00)
-				target_floor = 1;
-			if((PIND & 0b00100000) == 0x00)
-				target_floor = 2;
-			if((PIND & 0b01000000) == 0x00)
-				target_floor = 3;
-			if((PIND & 0b10000000) == 0x00)
-				target_floor = 4;
-		}
 
 		//층수 결정 
 		if(target_floor == 1)
@@ -207,7 +166,7 @@ int Adc_Channel(unsigned char Adc_input)
 {
 	ADMUX = (Adc_input | 0x40);    //채널 결정
 	ADCSRA |= 0x40;             //변환 시작!
-	while((ADCSRA & 0x10) == 0);   //변환이 완료될 까지 기다림.
+	while((ADCSRA & 0x10) == 0);   //변환이 완료될떄 까지 기다림.
 	return ADC;
 }
 
